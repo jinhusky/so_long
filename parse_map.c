@@ -6,7 +6,7 @@
 /*   By: kationg <kationg@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 12:27:42 by kationg           #+#    #+#             */
-/*   Updated: 2025/03/07 15:21:10 by kaijing          ###   ########.fr       */
+/*   Updated: 2025/03/09 15:08:16 by kaijing          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ typedef struct s_point
   int y;
 } t_point;
 
+
+
 //the function takes char * data type for file path because the file path is passed as a string
 char **parse_map(char *file_path, t_point *size, t_point *begin)
 {
@@ -27,8 +29,16 @@ char **parse_map(char *file_path, t_point *size, t_point *begin)
     printf("ERROR OPENING FILE");
     return NULL;
   }
-  char **tab;
-  return (tab);
+  char *line = get_next_line(fd);
+  int len = ;
+char **tab = malloc(len * sizeof(char *));
+  while (line)
+  {
+    line = get_next_line(fd);
+    len++;
+  }
+  
+  
   
 
 }
