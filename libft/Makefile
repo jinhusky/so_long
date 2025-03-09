@@ -6,7 +6,7 @@
 #    By: kationg <kationg@student.42kl.edu.my>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/19 14:36:11 by kationg           #+#    #+#              #
-#    Updated: 2025/01/13 15:48:36 by kationg          ###   ########.fr        #
+#    Updated: 2025/03/10 01:09:00 by kaijing          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,7 +36,7 @@ bonus: $(OBJECTS) $(BOBJECTS)
 	$(AR) -r $(NAME) $?
 
 %.o: %.c
-	$(CC) -c $(CFLAGS) $?
+	@$(CC) -c $(CFLAGS) $?
 
 clean:
 	rm -f $(OBJECTS) $(BOBJECTS) 

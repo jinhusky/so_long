@@ -5,6 +5,7 @@
 #include "libft/libft.h"
 #include "ft_printf/src/ft_printf.h"
 #include "get_next_line/get_next_line.h"
+#include <stdlib.h>
 
 
 #endif // !SO_LONG_H
