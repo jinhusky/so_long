@@ -6,13 +6,13 @@
 /*   By: kationg <kationg@student.42kl.edu.my>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 00:23:13 by kationg           #+#    #+#             */
-/*   Updated: 2025/01/14 15:12:55 by kationg          ###   ########.fr       */
+/*   Updated: 2025/03/09 23:59:37 by kaijing          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-static int	find_hex(unsigned long addr, int flag)
+int	find_hex(unsigned long addr, int flag)
 {
 	size_t	size;
 
@@ -29,7 +29,7 @@ static int	find_hex(unsigned long addr, int flag)
 	return (size);
 }
 
-static void	print_hex(unsigned long addr)
+ void	print_hex(unsigned long addr)
 {
 	const char	*base_16 = "0123456789abcdef";
 

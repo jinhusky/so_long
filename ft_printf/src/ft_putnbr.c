@@ -6,13 +6,13 @@
 /*   By: kationg <kationg@student.42kl.edu.my>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 00:25:58 by kationg           #+#    #+#             */
-/*   Updated: 2025/01/14 14:44:46 by kationg          ###   ########.fr       */
+/*   Updated: 2025/03/09 23:46:50 by kaijing          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-static int	ft_finddec(int n)
+int	ft_finddec(int n)
 {
 	int	count;
 
@@ -49,7 +49,7 @@ int	ft_putdec(int n)
 	return (count);
 }
 
-static int	find_unsigned(unsigned int n)
+int	find_unsigned(unsigned int n)
 {
 	int	count;
 

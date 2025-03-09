@@ -6,7 +6,7 @@
 /*   By: kationg <kationg@student.42kl.edu.my>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 19:02:43 by kationg           #+#    #+#             */
-/*   Updated: 2024/12/03 12:49:59 by kationg          ###   ########.fr       */
+/*   Updated: 2025/03/10 00:12:09 by kaijing          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,13 +92,13 @@ size_t			ft_strlcat(char *dest, const char *src, size_t size);
 
 t_list			*ft_lstnew(void *content);
 
-void			ft_lstadd_front(t_list **lst, t_list *new);
+void			ft_lstadd_front(t_list **lst, t_list *new_lst);
 
 int				ft_lstsize(t_list *lst);
 
 t_list			*ft_lstlast(t_list *lst);
 
-void			ft_lstadd_back(t_list **lst, t_list *new);
+void			ft_lstadd_back(t_list **lst, t_list *new_lst);
 
 void			ft_lstdelone(t_list *lst, void (*del)(void *));
 
