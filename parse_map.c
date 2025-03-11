@@ -6,7 +6,7 @@
 /*   By: kationg <kationg@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 12:27:42 by kationg           #+#    #+#             */
-/*   Updated: 2025/03/10 02:23:41 by kaijing          ###   ########.fr       */
+/*   Updated: 2025/03/11 14:54:16 by kaijing          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 #include <stdio.h>
 #include "ft_printf/src/ft_printf.h"
 #include "get_next_line/get_next_line.h"
-#include "so_long.h"
+#include "../includes/so_long.h"
+
 
 typedef struct s_point
 {
@@ -26,7 +27,7 @@ typedef struct s_point
 
 //the function takes char * data type for file path because the file path is passed as a string
 //added to check that it has same width in all rows, to ensure map is rectangled shaped
-void check_map_size(int fd, int *width, int *height)
+static void check_map_size(int fd, int *width, int *height)
 {
   char *line = get_next_line(fd);
   int p_width = 0;
@@ -37,21 +38,21 @@ void check_map_size(int fd, int *width, int *height)
     *width = 0;
     while (line[*width] != '\n' && line[*width] )
     {
-      *width++;
+      (*width)++;
     }
     if (p_width != *width)
     {
-      ft_printf("MAP IS NOT RECTANGLE");
+      ft_printf("Error \n MAP IS NOT RECTANGLE");
       return ;
     }
     free(line);
     line = get_next_line(fd);
-    *height++;
+    (*height)++;
   }
 }
 
 //malloc once here (total malloc = 1)
-char **parsing(int width, int height, int fd)
+static char **parsing(int width, int height, int fd)
 {
   int i = 0;
   char **res = malloc(height * sizeof(char *));
@@ -65,12 +66,16 @@ char **parsing(int width, int height, int fd)
   return (res);
 }
 
-int init_map(int fd)
+static int init_map(int fd)
 {
   int width = 0, height = 0;
   check_map_size(fd, &width, &height);
   char **tab = parsing(width, height, fd);
+  return 1;
 }
+
+
+
 /*
 int main(void)
 {
@@ -94,17 +99,16 @@ int main(int argc, char *argv[])
 {
   if (argc != 2)
   {
-    ft_printf("ONLY ACCEPT one argument")
+    ft_printf("Error\n ONLY ACCEPT one argument");
     return(1);
   }
   int fd = open(argv[1], O_RDONLY);
   if (fd == -1)
   {
-    ft_printf("ERROR OPENING FILE");
+    ft_printf("Error\n ERROR OPENING FILE");
     return (2);
   }
   init_map(fd);
-  if (!init_map)
-    return (1);
+  
 
 }

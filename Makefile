@@ -6,12 +6,12 @@
 #    By: kationg <kationg@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/09 15:09:41 by kationg           #+#    #+#              #
-#    Updated: 2025/03/10 00:17:12 by kaijing          ###   ########.fr        #
+#    Updated: 2025/03/11 14:52:54 by kaijing          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = so_long
-SRCS = srcs/pasrse.c 
+SRCS = parse_map.c 
 minilibx = mlx/libmlx.a
 CC_FLAGS = -Wall -Werror -Wextra
 OBJECT_DIR = object/
@@ -21,12 +21,16 @@ OBJECT = $(SRC:.c=.o)
 
 MLX_FlAGS = -I -L /usr/X11/lib -Lincludes -L./mlx -lmlx -Imlx -lXext -lX11 -lz -lm libft/libft.a ft_printf/libftprintf.a 
 
-$(OBJECT_DIR)%.o : %.c includes/so_long.h get_next_line/get_next_line.h
+$(OBJECT_DIR)%.o : %.c includes/so_long.h 
 	@mkdir -p $(OBJECT_DIR)
+	@mkdir -p $(OBJECT_DIR)srcs
+	@mkidr -p $(OBJECT_DIR)srcs/generate
+	@mkdir -p $(OBJECT_DIR)srcs/displaying
+	@mkdir -p $(OBJECT_DIR)srcs/handling
 	@cc $(CC_FLAGS) -c $< -o $@
 
 $(NAME): $(OBJECT_PREFIXED) maker
-	@cc -o $(NAME) $(OBJECT_PREFIXED) $(CC_FLAGS) $(MLX_FlAGS)
+	@gcc -o $(NAME) $(OBJECT_PREFIXED) $(CC_FLAGS) $(MLX_FlAGS)
 
 all: $(NAME)
 	

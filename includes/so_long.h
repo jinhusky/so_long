@@ -8,4 +8,6 @@
 #include <stdlib.h>
 
 
+//parse_map helper functions
+
 #endif // !SO_LONG_H
