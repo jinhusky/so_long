@@ -6,7 +6,7 @@
 #    By: kationg <kationg@student.42kl.edu.my>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/19 14:36:11 by kationg           #+#    #+#              #
-#    Updated: 2025/03/10 01:09:00 by kaijing          ###   ########.fr        #
+#    Updated: 2025/03/12 10:48:07 by kaijing          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,10 +30,10 @@ CFLAGS = -Wall -Wextra -Werror
 all: $(NAME)
 
 $(NAME): $(OBJECTS)
-	$(AR) -r $@ $?
+	$(AR) rc $@ $?
 
 bonus: $(OBJECTS) $(BOBJECTS)
-	$(AR) -r $(NAME) $?
+	$(AR) rc $(NAME) $?
 
 %.o: %.c
 	@$(CC) -c $(CFLAGS) $?

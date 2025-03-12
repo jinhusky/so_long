@@ -6,17 +6,17 @@
 /*   By: kationg <kationg@student.42kl.edu.my>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 14:22:25 by kationg           #+#    #+#             */
-/*   Updated: 2025/03/09 23:58:55 by kaijing          ###   ########.fr       */
+/*   Updated: 2025/03/12 10:49:32 by kaijing          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_PRINTF_H
 # define FT_PRINTF_H
 
+# include "../../libft/libft.h"
 # include <unistd.h>
 # include <stdlib.h>
 # include <stdarg.h>
-# include "../includes/libft/libft.h"
 
 int		ft_printf(const char *str, ...);
 int		ft_putchar(const char c);

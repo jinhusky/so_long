@@ -6,14 +6,10 @@
 /*   By: kationg <kationg@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 12:27:42 by kationg           #+#    #+#             */
-/*   Updated: 2025/03/11 14:54:16 by kaijing          ###   ########.fr       */
+/*   Updated: 2025/03/12 10:38:40 by kaijing          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <fcntl.h>
-#include <stdio.h>
-#include "ft_printf/src/ft_printf.h"
-#include "get_next_line/get_next_line.h"
 #include "../includes/so_long.h"
 
 
