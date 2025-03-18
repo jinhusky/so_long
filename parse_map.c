@@ -6,11 +6,11 @@
 /*   By: kationg <kationg@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 12:27:42 by kationg           #+#    #+#             */
-/*   Updated: 2025/03/12 10:38:40 by kaijing          ###   ########.fr       */
+/*   Updated: 2025/03/18 11:30:07 by kaijing          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/so_long.h"
+#include "includes/so_long.h"
 
 
 typedef struct s_point
@@ -23,7 +23,7 @@ typedef struct s_point
 
 //the function takes char * data type for file path because the file path is passed as a string
 //added to check that it has same width in all rows, to ensure map is rectangled shaped
-static void check_map_size(int fd, int *width, int *height)
+void check_map_size(int fd, int *width, int *height)
 {
   char *line = get_next_line(fd);
   int p_width = 0;
@@ -38,7 +38,7 @@ static void check_map_size(int fd, int *width, int *height)
     }
     if (p_width != *width)
     {
-      ft_printf("Error \n MAP IS NOT RECTANGLE");
+      ft_printf("Error \n MAP IS NOT RECTANGLE\n");
       return ;
     }
     free(line);
@@ -48,7 +48,7 @@ static void check_map_size(int fd, int *width, int *height)
 }
 
 //malloc once here (total malloc = 1)
-static char **parsing(int width, int height, int fd)
+char **parsing(int width, int height, int fd)
 {
   int i = 0;
   char **res = malloc(height * sizeof(char *));
@@ -59,52 +59,64 @@ static char **parsing(int width, int height, int fd)
     free(line);
     line = get_next_line(fd);
   }
+  width ++;
   return (res);
 }
 
-static int init_map(int fd)
-{
-  int width = 0, height = 0;
-  check_map_size(fd, &width, &height);
-  char **tab = parsing(width, height, fd);
-  return 1;
-}
-
-
-
+//find out find there is only Player, count Exit, count collectibles, also check if map is surrounded by walls
 /*
-int main(void)
+int valid_map(char **map)
 {
-  t_point size;
-  t_point begin;
-  char **tab = parse_map("map/map1.ber", &size, &begin);
+  int i = 0;
+  int j = 0;
+  int player = 0;
+  int collectibles = 0;
+  int exits = 0;
 
-  int fd = open("map/map1.ber", O_RDONLY);
-  if (fd == - 1)
+  while (i < height)
   {
-    printf("ERROR OPENING FILE");
-    return NULL;
+    j = 0;
+    while (j < width)
+    {
+      if (map[i][0] != '1' || map[0][j] != '1')
+      {
+        ft_printf("Map is not surrounded by walls");
+        return (1);
+      }
+      else if (map[i][j] == 'P')
+      {
+        t_point.y = i;
+        t_point.x = y;
+        player++;
+      }
+      else if (map[i][j] == 'C')
+        collectibles++;
+      else if (map[i][j] == 'E')
+        exits++;
+      j++;
+    }
+    i++;
   }
 
+  if (exits < 1 || collectibles < 1 || player != 1)
+  {
+    ft_printf("Map does not have the minimum amount of exit/collectibles/player");
+    return (1);
+  }
+}                  
 
-
-
-}*/
-
-int main(int argc, char *argv[])
+//use flood_fill algorithm to check if all collectibles and exits are accessible, starting from player position
+static check valid_path(char **map, t_point size, t_point begin)
 {
-  if (argc != 2)
+  t_point c = map[begin.y][begin.x];
+  map[begin.y][begin.x] = '1';
+  t_point newpoint;
+  if (begin.y > 0 && map[begin.y - 1][begin.x])
   {
-    ft_printf("Error\n ONLY ACCEPT one argument");
-    return(1);
+    newpoint.y = begin.y - 1;
+    newpoint.x = begin.x;
+    valid_path(map, size, newpoint);
   }
-  int fd = open(argv[1], O_RDONLY);
-  if (fd == -1)
-  {
-    ft_printf("Error\n ERROR OPENING FILE");
-    return (2);
-  }
-  init_map(fd);
-  
+  if (begin.x < size.x - 1  )
 
-}
+}       */           

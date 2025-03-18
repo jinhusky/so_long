@@ -9,5 +9,7 @@
 
 
 //parse_map helper functions
+void check_map_size(int fd, int *width, int *height);
+char **parsing(int width, int height, int fd);
 
 #endif 
