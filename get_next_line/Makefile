@@ -7,10 +7,10 @@ OBJ = $(SRC:.c=.o)
 CFLAG = -Wall -Wextra -Werror
 
 $(NAME): $(OBJ)
-	ar rcs $(NAME) $(OBJ)
+	ar rc $(NAME) $(OBJ)
 
 %.o: %.c
-	cc -I. -o $@ -c $? $(CFLAG) 
+	cc  -o $@ -c $? $(CFLAG) 
 
 all: $(NAME)
 

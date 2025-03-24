@@ -6,25 +6,21 @@
 /*   By: kationg <kationg@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 12:27:42 by kationg           #+#    #+#             */
-/*   Updated: 2025/03/22 02:09:36 by kaijing          ###   ########.fr       */
+/*   Updated: 2025/03/22 01:16:56 by kationg          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+
+#include "ft_printf/src/ft_printf.h"
 #include "includes/so_long.h"
-
-
-typedef struct s_point
-{
-  int x;
-  int y;
-} t_point;
-
-
+#include <unistd.h>
 
 //the function takes char * data type for file path because the file path is passed as a string
-//added to check that it has same width in all rows, to ensure map is rectangled shaped
-void check_map_size(int fd, int *width, int *height)
+//added to check that it has same width in all rows, to ensure map is rectangled shaped (checks for rectangle before malloc)
+char *check_map_size(int fd, int *width, int *height)
 {
+  char *buffer;
+  buffer = ft_strdup("");
   char *line = get_next_line(fd);
   int p_width = 0;
   while (line)
@@ -32,91 +28,102 @@ void check_map_size(int fd, int *width, int *height)
     if (height != 0)
       p_width = *width;
     *width = 0;
+    buffer = ft_strjoin(buffer, line); 
     while (line[*width] != '\n' && line[*width] )
     {
       (*width)++;
     }
-    if (p_width != *width)
+    if (p_width != *width && *height != 0)
     {
-      ft_printf("Error \n MAP IS NOT RECTANGLE\n");
-      return ;
+      perror("Map is not rectangle\n");
+      return (NULL);
     }
     free(line);
     line = get_next_line(fd);
     (*height)++;
   }
+  return (buffer);
 }
 
+
 //malloc once here (total malloc = 1)
-char **parsing(int width, int height, int fd)
+//once map is stored, now we need to make into 2D array so that it can flood_fill
+char **parsing(int width, int height, char *buffer)
 {
   int i = 0;
+  int len = 0;
+  int count = 0;
   char **res = malloc(height * sizeof(char *));
-  char *line = get_next_line(fd);
-  while (line)
+  
+  while (buffer[i])
   {
-    res[i++] = ft_strdup(line);
-    free(line);
-    line = get_next_line(fd);
+    len = 0;
+    //since we are using strlcpy we need an extra byte for \0 since strlcpy
+    res[count] = malloc(width + 1);
+    while (buffer[i] != '\n' && buffer[i])
+    {
+      i++;
+      len++;
+    }
+    // +1 size because strlcpy will only copy up till size -1 to ensure null termination
+    ft_strlcpy(res[count++], buffer + i - len, width + 1);
+
+    i++;
   }
-  width ++;
   return (res);
 }
 
-//find out find there is only Player, count Exit, count collectibles, also check if map is surrounded by walls
-/*
-int valid_map(char **map)
+int check_minimum_asset(char *map)
+{
+  int i = 0;
+  int collectibles = 0;
+  int players = 0;
+  int exits = 0;
+  while (map[i])
+  {
+    if (map[i] == 'P')
+      players++;
+    else if (map[i] == 'C')
+      collectibles++;
+    else if (map[i] == 'E')
+      exits++;
+    i++;
+  }
+  if (players != 1)
+    ft_printf("Error\none player per game");
+  else if (collectibles < 1)
+    ft_printf("Error\nneed at least one collectible");
+  else if (exits < 1)
+    ft_printf("Error\nneed at least one collectible");
+  else 
+    return (1);
+  return (0);
+}
+
+int valid_map(char **map, int width, int height, t_point *begin)
 {
   int i = 0;
   int j = 0;
-  int player = 0;
-  int collectibles = 0;
-  int exits = 0;
-
   while (i < height)
   {
     j = 0;
     while (j < width)
     {
-      if (map[i][0] != '1' || map[0][j] != '1')
+      if (map[i][0] != '1' || map[0][j] != '1' || map[height -1][j] != '1' || map[i][width - 1] != '1')
       {
-        ft_printf("Map is not surrounded by walls");
-        return (1);
+        ft_printf("Error\nMap is not surrounded by walls");
+        return (0);
       }
       else if (map[i][j] == 'P')
       {
-        t_point.y = i;
-        t_point.x = y;
-        player++;
+        (*begin).y = i;
+        (*begin).x = j;
       }
-      else if (map[i][j] == 'C')
-        collectibles++;
-      else if (map[i][j] == 'E')
-        exits++;
       j++;
     }
     i++;
   }
-
-  if (exits < 1 || collectibles < 1 || player != 1)
-  {
-    ft_printf("Map does not have the minimum amount of exit/collectibles/player");
-    return (1);
-  }
+  return (1);
 }                  
 
-//use flood_fill algorithm to check if all collectibles and exits are accessible, starting from player position
-static check valid_path(char **map, t_point size, t_point begin)
-{
-  t_point c = map[begin.y][begin.x];
-  map[begin.y][begin.x] = '1';
-  t_point newpoint;
-  if (begin.y > 0 && map[begin.y - 1][begin.x])
-  {
-    newpoint.y = begin.y - 1;
-    newpoint.x = begin.x;
-    valid_path(map, size, newpoint);
-  }
-  if (begin.x < size.x - 1  )
 
-}       */           
