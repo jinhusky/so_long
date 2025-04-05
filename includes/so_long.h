@@ -9,11 +9,22 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <stdio.h>
-typedef struct s_data
+
+#define ESC 53
+#define W 13
+#define A 0
+#define S 1
+#define D 2
+
+typedef struct s_img
 {
-  void *mlx_ptr;
-  void *win_ptr;
-} t_data;
+  void *img;
+  int w;
+  int h;
+  int x;
+  int y;
+  struct s_img *next;
+}t_img;
 
 typedef struct s_point
 {
@@ -21,14 +32,38 @@ typedef struct s_point
   int x;
 }t_point;
 
+typedef struct s_map
+{
+  int fd; 
+  int w;
+  int h;
+  char *map;
+  char **matrix;
+  t_point start;
+  int collect;
+  int exit;
+  int player;
+}t_map;
+
+typedef struct s_vars
+{
+  void *mlx_ptr;
+  void *win_ptr;
+  t_img *img;
+} t_vars;
+
+
 //parse_map helper functions
-char *check_map_size(int fd, int *width, int *height);
 
- char **parsing(int width, int height, char * fd);
 
-int check_minimum_asset(char *map);
 
-int valid_map(char **map, int width, int height, t_point *begin);
+void check_map_size(t_map *map);
+
+void parse_matrix(t_map *map);
+
+void check_minimum_asset(t_map *map);
+
+void valid_map(t_map *map);
 
 
 #endif

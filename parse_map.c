@@ -6,7 +6,7 @@
 /*   By: kationg <kationg@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 12:27:42 by kationg           #+#    #+#             */
-/*   Updated: 2025/03/22 01:16:56 by kationg          ###   ########.fr       */
+/*   Updated: 2025/04/04 14:54:16 by kationg          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,3 +127,7 @@ int valid_map(char **map, int width, int height, t_point *begin)
 }                  
 
 
+int parse_map(char *map_path)
+{
+  int fd = 
+}
