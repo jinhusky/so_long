@@ -10,21 +10,27 @@
 #include <errno.h>
 #include <stdio.h>
 
-#define ESC 53
-#define W 13
-#define A 0
-#define S 1
-#define D 2
+#define IMG_H 32
+#define IMG_W 32
 
-typedef struct s_img
+#define FLOOR '0'
+#define WALL '1'
+#define COLLECTIBLES 'C'
+#define EXIT 'E'
+#define PLAYER 'P'
+
+#define WIN_W 1024
+#define WIN_H 576
+
+typedef struct s_sprite
 {
-  void *img;
+  void *img_ptr;
   int w;
   int h;
   int x;
   int y;
-  struct s_img *next;
-}t_img;
+  struct s_sprite *next;
+}t_sprite;
 
 typedef struct s_point
 {
@@ -34,36 +40,41 @@ typedef struct s_point
 
 typedef struct s_map
 {
+  t_point starting_p;
   int fd; 
   int w;
   int h;
-  char *map;
+  char *array;
   char **matrix;
-  t_point start;
   int collect;
   int exit;
   int player;
 }t_map;
 
-typedef struct s_vars
+typedef struct s_game
 {
   void *mlx_ptr;
   void *win_ptr;
-  t_img *img;
-} t_vars;
-
+  t_map map;
+  t_sprite floor;
+  t_sprite wall;
+  t_sprite collectibles;
+  t_sprite exit;
+  t_sprite player;
+  int moves;
+} t_game;
 
 //parse_map helper functions
 
 
 
-void check_map_size(t_map *map);
+void check_map_size(t_game *map);
 
-void parse_matrix(t_map *map);
+void parse_matrix(t_game *map);
 
-void check_minimum_asset(t_map *map);
+void check_minimum_asset(t_game *map);
 
-void valid_map(t_map *map);
+void valid_map(t_game *map);
 
 
 #endif
