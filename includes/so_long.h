@@ -61,6 +61,7 @@ typedef struct s_game
   t_sprite collectibles;
   t_sprite exit;
   t_sprite player;
+  int end_state;
   int moves;
 } t_game;
 

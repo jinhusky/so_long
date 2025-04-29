@@ -6,7 +6,7 @@
 /*   By: kationg <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 01:55:27 by kationg           #+#    #+#             */
-/*   Updated: 2025/04/30 04:25:18 by kationg          ###   ########.fr       */
+/*   Updated: 2025/04/30 05:04:25 by kationg          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,6 +210,8 @@ int render_map(t_game *game)
 
 int close_game(t_game* game)
 {
+  if (game->end_state)
+    ft_printf("Victory! %i MOVES made \n", game->moves);
   mlx_destroy_window(game->mlx_ptr, game->win_ptr);
   mlx_destroy_display(game->mlx_ptr);
   free(game->mlx_ptr);
@@ -223,8 +225,18 @@ int check_boundary(t_game *game, t_point position)
   int x = position.x;
   if (game->map.matrix[y][x] == WALL)
     return 0;
+  else if (game->map.matrix[y][x] == COLLECTIBLES)
+  {
+    game->map.collect -= 1;
+    game->map.matrix[y][x] = FLOOR;
+    if (game->map.collect == 0)
+      game->end_state = 1;
+  }
+  else if (game->map.matrix[y][x] == EXIT && game->end_state)
+    close_game(game);
   return 1;
 }
+
 
 int handle_input(int keycode, t_game *game)
 {
@@ -234,11 +246,39 @@ int handle_input(int keycode, t_game *game)
   {
     temp.y -= 1;
     if (check_boundary(game, temp))
+    {
       game->map.starting_p.y -= 1;
+      game->moves++;
+    }
   } 
-  else if (keycode )
+  else if (keycode == 115)
+  {
+    temp.y += 1;
+    if (check_boundary(game, temp))
+    {
+      game->map.starting_p.y += 1;
+      game->moves++;
+    }
+  }
+  else if (keycode == 97)
+  {
+    temp.x -= 1;
+    if (check_boundary(game, temp))
+    {
+      game->map.starting_p.x -= 1;
+      game->moves++;
+    }
+  }
+  else if (keycode == 100)
+  {
+    temp.x += 1;
+    if (check_boundary(game, temp))
+    {
+      game->map.starting_p.x += 1;
+      game->moves++;
+    }
+  }
   render_map(game);
-  
   return (0);
 }
 
