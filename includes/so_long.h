@@ -41,7 +41,8 @@ typedef struct s_point
 typedef struct s_map
 {
   t_point starting_p;
-  int fd; 
+  int fd;
+  //t_point size;
   int w;
   int h;
   char *array;
@@ -71,7 +72,7 @@ typedef struct s_game
 
 void check_map_size(t_game *map);
 
-void parse_matrix(t_game *map);
+char **parse_matrix(t_game *map);
 
 void check_minimum_asset(t_game *map);
 

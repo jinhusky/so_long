@@ -6,7 +6,7 @@
 /*   By: kationg <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 01:55:27 by kationg           #+#    #+#             */
-/*   Updated: 2025/04/30 05:04:25 by kationg          ###   ########.fr       */
+/*   Updated: 2025/05/02 21:56:49 by kationg          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,25 +51,27 @@ void check_map_size(t_game *game)
   }
 }
 
-void parse_matrix(t_game *game)
+char **parse_matrix(t_game *game)
 {
   int i = 0;
   int len = 0;
   int count = 0;
 
-  game->map.matrix = malloc(game->map.h *sizeof(char *));
+  char **grid;
+  grid = malloc(game->map.h *sizeof(char *));
   while (game->map.array[i])
   {
     len = 0;
-    game->map.matrix[count] = malloc(game->map.w + 1);
+    grid[count] = malloc(game->map.w + 1);
     while (game->map.array[i] != '\n' && game->map.array[i])
     {
       i++;
       len++;
     }
-    ft_strlcpy(game->map.matrix[count++], game->map.array + i - len, game->map.w + 1);
+    ft_strlcpy(grid[count++], game->map.array + i - len, game->map.w + 1);
     i++;
   }
+  return (grid);
 }
 
 void check_minimum_asset(t_game *game)
@@ -116,12 +118,58 @@ void valid_map(t_game *game)
     i++;
   }
 }
+
+void flood_fill2(char c, int *collect, int *exit)
+{
+  if (c == COLLECTIBLES)
+    *collect -= 1;
+  else if (c == EXIT)
+    *exit -= 1;
+}
+
+
+void flood_fill(char **grid, int h, int w, t_point begin, int collect, int exit)
+{
+  t_point temp;
+  char c = grid[begin.y][begin.x];
+  flood_fill2(c, &collect, &exit);
+  grid[begin.y][begin.x] = 'F';
+  if (grid[begin.y - 1][begin.x] != WALL && grid[begin.y - 1][begin.x] != 'F')
+  {
+    temp.y = begin.y - 1;
+    temp.x = begin.x;
+    flood_fill(grid, h, w, temp, collect, exit);
+  }
+  if (grid[begin.y + 1][begin.x] != WALL && grid[begin.y + 1][begin.x] != 'F')
+  {
+    temp.y = begin.y + 1;
+    temp.x = begin.x;
+    flood_fill(grid, h, w, temp, collect, exit);
+  }
+  if (grid[begin.y][begin.x - 1] != WALL && grid[begin.y][begin.x - 1] != 'F')
+  {
+    temp.y = begin.y;
+    temp.x = begin.x - 1;
+    flood_fill(grid, h, w, temp, collect, exit);
+  }
+  if (grid[begin.y][begin.x + 1] != WALL && grid[begin.y][begin.x + 1] != 'F')
+  {
+    temp.y = begin.y;
+    temp.x = begin.x + 1;
+    flood_fill(grid, h, w, temp, collect, exit);
+  }
+}
+
 static void check_map(t_game *game)
 {
   check_map_size(game);
-  parse_matrix(game);
+  game->map.matrix = parse_matrix(game);
   check_minimum_asset(game);
   valid_map(game);
+  char **cpy_grid;
+  cpy_grid = parse_matrix(game);
+  flood_fill(cpy_grid, game->map.h, game->map.w, game->map.starting_p, game->map.collect, game->map.exit);
+  ft_printf("%i\n", game->map.exit);
 }
 
 static void check_cml_argument(int argc, char *arg, t_game *game)
@@ -242,7 +290,9 @@ int handle_input(int keycode, t_game *game)
 {
   t_point temp = game->map.starting_p;
   
-  if (keycode == 119)
+  if (keycode == 65307)
+    close_game(game);
+  else if (keycode == 119)
   {
     temp.y -= 1;
     if (check_boundary(game, temp))
