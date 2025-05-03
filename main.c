@@ -6,7 +6,7 @@
 /*   By: kationg <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 01:55:27 by kationg           #+#    #+#             */
-/*   Updated: 2025/05/02 21:56:49 by kationg          ###   ########.fr       */
+/*   Updated: 2025/05/03 15:45:53 by kationg          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@
 
 void error_mssg(char *message, t_game *game)
 {
-  free(game);
   ft_printf("Error\n""%s\n", message);
+  free(game->mlx_ptr);
   exit(EXIT_FAILURE);
 }
 
@@ -119,45 +119,51 @@ void valid_map(t_game *game)
   }
 }
 
-void flood_fill2(char c, int *collect, int *exit)
-{
-  if (c == COLLECTIBLES)
-    *collect -= 1;
-  else if (c == EXIT)
-    *exit -= 1;
-}
-
-
-void flood_fill(char **grid, int h, int w, t_point begin, int collect, int exit)
+void flood_fill(char **grid, int h, int w, t_point begin)
 {
   t_point temp;
-  char c = grid[begin.y][begin.x];
-  flood_fill2(c, &collect, &exit);
+  //char c = grid[begin.y][begin.x];
   grid[begin.y][begin.x] = 'F';
   if (grid[begin.y - 1][begin.x] != WALL && grid[begin.y - 1][begin.x] != 'F')
   {
     temp.y = begin.y - 1;
     temp.x = begin.x;
-    flood_fill(grid, h, w, temp, collect, exit);
+    flood_fill(grid, h, w, temp);
   }
   if (grid[begin.y + 1][begin.x] != WALL && grid[begin.y + 1][begin.x] != 'F')
   {
     temp.y = begin.y + 1;
     temp.x = begin.x;
-    flood_fill(grid, h, w, temp, collect, exit);
+    flood_fill(grid, h, w, temp);
   }
   if (grid[begin.y][begin.x - 1] != WALL && grid[begin.y][begin.x - 1] != 'F')
   {
     temp.y = begin.y;
     temp.x = begin.x - 1;
-    flood_fill(grid, h, w, temp, collect, exit);
+    flood_fill(grid, h, w, temp);
   }
   if (grid[begin.y][begin.x + 1] != WALL && grid[begin.y][begin.x + 1] != 'F')
   {
     temp.y = begin.y;
     temp.x = begin.x + 1;
-    flood_fill(grid, h, w, temp, collect, exit);
+    flood_fill(grid, h, w, temp);
   }
+}
+static int check_floodfill(char **grid, t_game *game)
+{
+  int i = 0;
+  while (i < game->map.h)
+  {
+    int j = 0;
+    while (j < game->map.w)
+    {
+      if (ft_strchr("CE", grid[i][j]))
+        return (1);
+      j++;
+    }
+    i++;
+  }
+  return (0);
 }
 
 static void check_map(t_game *game)
@@ -168,8 +174,9 @@ static void check_map(t_game *game)
   valid_map(game);
   char **cpy_grid;
   cpy_grid = parse_matrix(game);
-  flood_fill(cpy_grid, game->map.h, game->map.w, game->map.starting_p, game->map.collect, game->map.exit);
-  ft_printf("%i\n", game->map.exit);
+  flood_fill(cpy_grid, game->map.h, game->map.w, game->map.starting_p);
+  if (check_floodfill(cpy_grid, game))
+    error_mssg("Some exit or collectibles cannot be reached", game);
 }
 
 static void check_cml_argument(int argc, char *arg, t_game *game)
@@ -281,7 +288,10 @@ int check_boundary(t_game *game, t_point position)
       game->end_state = 1;
   }
   else if (game->map.matrix[y][x] == EXIT && game->end_state)
+  {
+    game->moves++;
     close_game(game);
+  }
   return 1;
 }
 
