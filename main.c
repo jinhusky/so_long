@@ -6,7 +6,7 @@
 /*   By: kationg <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 01:55:27 by kationg           #+#    #+#             */
-/*   Updated: 2025/05/03 15:45:53 by kationg          ###   ########.fr       */
+/*   Updated: 2025/05/03 16:42:57 by kationg          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,22 @@
 #include <fcntl.h>
 #include <stdio.h>
 
+static void free_grid(char **grid, t_game *game)
+{
+  int i = 0;
+  while (i < game->map.h)
+    free(grid[i++]);
+  free(grid);
+}
+
+
 void error_mssg(char *message, t_game *game)
 {
   ft_printf("Error\n""%s\n", message);
-  free(game->mlx_ptr);
+  if (game->map.matrix)
+    free_grid(game->map.matrix, game);
+  if (game->map.array)
+    free(game->map.array);
   exit(EXIT_FAILURE);
 }
 
@@ -177,6 +189,7 @@ static void check_map(t_game *game)
   flood_fill(cpy_grid, game->map.h, game->map.w, game->map.starting_p);
   if (check_floodfill(cpy_grid, game))
     error_mssg("Some exit or collectibles cannot be reached", game);
+  free_grid(cpy_grid, game);
 }
 
 static void check_cml_argument(int argc, char *arg, t_game *game)
@@ -195,14 +208,13 @@ void init_mlx(t_game *game)
 {
   game->mlx_ptr = mlx_init();
   if (!game->mlx_ptr)
-    error_mssg("failed to init mlx ptr" , game);
+    error_mssg("failed to init mlx ptr", game);
   game->win_ptr = mlx_new_window(game->mlx_ptr, game->map.w * IMG_W, game->map.h * IMG_H, "so_long");
   if (!game->win_ptr)
   {
     free(game->mlx_ptr);    
     error_mssg("failed to make new mlx window", game);
   }
-  
 }
 
 t_sprite init_sprite(t_game *game, char *file_path)
@@ -215,11 +227,8 @@ t_sprite init_sprite(t_game *game, char *file_path)
   return (sprite);
 }
 
-
-
 void load_sprite(t_game *game)
 {
-  
   game->player = init_sprite(game, "assets/character/11zon_walk-front.xpm");
   game->collectibles = init_sprite(game, "assets/items/11zon_dynamite.xpm");
   game->exit = init_sprite(game, "assets/items/11zon_door-with-lock.xpm");
@@ -238,12 +247,6 @@ void render_sprite(t_game *game, char c, int y, int x)
     mlx_put_image_to_window(game->mlx_ptr, game->win_ptr, game->exit.img_ptr, IMG_W * x, IMG_H * y);
 }
 
-static void player_position(t_game *game)
-{
-  mlx_put_image_to_window(game->mlx_ptr, game->win_ptr, game->player.img_ptr, IMG_W * game->map.starting_p.x, game->map.starting_p.y * IMG_H);
-}
-
-
 int render_map(t_game *game)
 {
   int i = 0;
@@ -258,10 +261,9 @@ int render_map(t_game *game)
     }
     i++;
   }
-  player_position(game);
+  mlx_put_image_to_window(game->mlx_ptr, game->win_ptr, game->player.img_ptr, IMG_W * game->map.starting_p.x, game->map.starting_p.y * IMG_H);
   return (0);
 }
-
 
 int close_game(t_game* game)
 {
@@ -270,6 +272,10 @@ int close_game(t_game* game)
   mlx_destroy_window(game->mlx_ptr, game->win_ptr);
   mlx_destroy_display(game->mlx_ptr);
   free(game->mlx_ptr);
+  if (game->map.matrix)
+    free_grid(game->map.matrix, game);
+  if (game->map.array)
+    free(game->map.array);
   exit(0);
   return (0);
 }
