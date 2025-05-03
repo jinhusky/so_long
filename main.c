@@ -6,7 +6,7 @@
 /*   By: kationg <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 01:55:27 by kationg           #+#    #+#             */
-/*   Updated: 2025/05/03 16:42:57 by kationg          ###   ########.fr       */
+/*   Updated: 2025/05/03 17:40:24 by kationg          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,23 @@ static void free_grid(char **grid, t_game *game)
     free(grid[i++]);
   free(grid);
 }
+
+void destroy_sprite(t_game *game)
+{
+  mlx_destroy_image(game->mlx_ptr, game->player.img_ptr);
+  mlx_destroy_image(game->mlx_ptr, game->floor.img_ptr);
+  mlx_destroy_image(game->mlx_ptr, game->collectibles.img_ptr);
+  mlx_destroy_image(game->mlx_ptr, game->wall.img_ptr);
+  mlx_destroy_image(game->mlx_ptr, game->exit.img_ptr);
+}
+void free_map(t_game *game)
+{
+  if (game->map.matrix)
+    free_grid(game->map.matrix, game);
+  if (game->map.array)
+    free(game->map.array);
+}
+
 
 
 void error_mssg(char *message, t_game *game)
@@ -267,15 +284,13 @@ int render_map(t_game *game)
 
 int close_game(t_game* game)
 {
+  free_map(game);
+  destroy_sprite(game);
   if (game->end_state)
     ft_printf("Victory! %i MOVES made \n", game->moves);
   mlx_destroy_window(game->mlx_ptr, game->win_ptr);
   mlx_destroy_display(game->mlx_ptr);
   free(game->mlx_ptr);
-  if (game->map.matrix)
-    free_grid(game->map.matrix, game);
-  if (game->map.array)
-    free(game->map.array);
   exit(0);
   return (0);
 }
@@ -348,7 +363,6 @@ int handle_input(int keycode, t_game *game)
   return (0);
 }
 
-
 int main(int argc, char *argv[])
 {
   t_game game;
@@ -362,40 +376,5 @@ int main(int argc, char *argv[])
   mlx_key_hook(game.win_ptr, handle_input, &game);
   mlx_loop(game.mlx_ptr);
 }
-
-
-  /*
-  t_data data;
-  data.mlx_ptr = mlx_init();
-  if (!data.mlx_ptr)
-    return (1);
-  data.win_ptr = mlx_new_window(data.mlx_ptr, 1200, 800, "hi :_)");
-  if (!data.win_ptr)
-    return (free(data.mlx_ptr), 1);
-
-
-  int x;
-  int y;
-  void *tile = mlx_xpm_file_to_image(data.mlx_ptr, "textures/0_Template_Background1.xpm ", &x, &y);
-  mlx_put_image_to_window(data.mlx_ptr, data.win_ptr, tile, 0 , 0);
-  mlx_loop(data.mlx_ptr);
-
- 
-  t_data *data;
-  data = malloc(sizeof(t_data));
-  data -> mlx_ptr = mlx_init();
-  if (!data -> mlx_ptr)
-    return (1);
-  data -> win_ptr = mlx_new_window(data -> mlx_ptr, 1920, 1080, "hi :_)");
-  if (!data -> win_ptr)
-    return (free(data -> mlx_ptr), 1);
-  int x ;
-  int y ;
-  mlx_hook(data -> win_ptr, 2, 0, quit, data);
-  void *tile = mlx_xpm_file_to_image(data -> mlx_ptr, "textures/0_Template_Tileset_Background1.xpm", &x, &y);
-  mlx_put_image_to_window(data -> mlx_ptr, data -> win_ptr, tile, 0 , 0);
-  mlx_loop(data -> mlx_ptr); 
-}
-*/
 
 
