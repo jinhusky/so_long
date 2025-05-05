@@ -9,6 +9,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <stdio.h>
+#include <X11/keysym.h>
 
 #define IMG_H 32
 #define IMG_W 32
@@ -61,7 +62,11 @@ typedef struct s_game
   t_sprite wall;
   t_sprite collectibles;
   t_sprite exit;
-  t_sprite player;
+  t_sprite player_front;
+  t_sprite player_back;
+  t_sprite player_right;
+  t_sprite player_left;
+  int player_state;
   int end_state;
   int moves;
 } t_game;

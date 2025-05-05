@@ -6,7 +6,7 @@
 /*   By: kationg <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 01:55:27 by kationg           #+#    #+#             */
-/*   Updated: 2025/05/03 17:40:24 by kationg          ###   ########.fr       */
+/*   Updated: 2025/05/06 02:23:59 by kationg          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include <complex.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <unistd.h>
 
 static void free_grid(char **grid, t_game *game)
 {
@@ -30,7 +31,10 @@ static void free_grid(char **grid, t_game *game)
 
 void destroy_sprite(t_game *game)
 {
-  mlx_destroy_image(game->mlx_ptr, game->player.img_ptr);
+  mlx_destroy_image(game->mlx_ptr, game->player_right.img_ptr);
+  mlx_destroy_image(game->mlx_ptr, game->player_left.img_ptr);
+  mlx_destroy_image(game->mlx_ptr, game->player_front.img_ptr);
+  mlx_destroy_image(game->mlx_ptr, game->player_back.img_ptr);
   mlx_destroy_image(game->mlx_ptr, game->floor.img_ptr);
   mlx_destroy_image(game->mlx_ptr, game->collectibles.img_ptr);
   mlx_destroy_image(game->mlx_ptr, game->wall.img_ptr);
@@ -120,7 +124,7 @@ void check_minimum_asset(t_game *game)
       game->map.exit++;
     i++;
   }
-  if (game->map.player != 1 || game->map.collect < 1 || game->map.exit < 1)
+  if (game->map.player != 1 || game->map.collect < 1 || game->map.exit != 1)
     error_mssg("Map does not have the minumum amount of exit/collectible/player", game);
 }
 
@@ -246,7 +250,10 @@ t_sprite init_sprite(t_game *game, char *file_path)
 
 void load_sprite(t_game *game)
 {
-  game->player = init_sprite(game, "assets/character/11zon_walk-front.xpm");
+  game->player_front = init_sprite(game, "assets/character/11zon_walk-front.xpm");
+  game->player_back = init_sprite(game, "assets/character/11zon_walk-back.xpm");
+  game->player_right = init_sprite(game, "assets/character/11zon_walk-right.xpm");
+  game->player_left = init_sprite(game, "assets/character/11zon_walk-left.xpm");
   game->collectibles = init_sprite(game, "assets/items/11zon_dynamite.xpm");
   game->exit = init_sprite(game, "assets/items/11zon_door-with-lock.xpm");
   game->floor = init_sprite(game, "assets/terrains/11zon_ground.xpm");
@@ -264,6 +271,18 @@ void render_sprite(t_game *game, char c, int y, int x)
     mlx_put_image_to_window(game->mlx_ptr, game->win_ptr, game->exit.img_ptr, IMG_W * x, IMG_H * y);
 }
 
+static void render_player(t_game *game)
+{
+  if (game->player_state == 0)
+    mlx_put_image_to_window(game->mlx_ptr, game->win_ptr, game->player_front.img_ptr, IMG_W * game->map.starting_p.x, IMG_H * game->map.starting_p.y);
+  else if (game->player_state == 1)
+    mlx_put_image_to_window(game->mlx_ptr, game->win_ptr, game->player_back.img_ptr, IMG_W * game->map.starting_p.x, IMG_H * game->map.starting_p.y);
+  else if (game->player_state == 2)
+    mlx_put_image_to_window(game->mlx_ptr, game->win_ptr, game->player_left.img_ptr, IMG_W * game->map.starting_p.x, IMG_H * game->map.starting_p.y);
+  else if (game->player_state == 3)
+    mlx_put_image_to_window(game->mlx_ptr, game->win_ptr, game->player_right.img_ptr, IMG_W * game->map.starting_p.x, IMG_H * game->map.starting_p.y);
+}
+
 int render_map(t_game *game)
 {
   int i = 0;
@@ -278,7 +297,7 @@ int render_map(t_game *game)
     }
     i++;
   }
-  mlx_put_image_to_window(game->mlx_ptr, game->win_ptr, game->player.img_ptr, IMG_W * game->map.starting_p.x, game->map.starting_p.y * IMG_H);
+  render_player(game);
   return (0);
 }
 
@@ -316,47 +335,50 @@ int check_boundary(t_game *game, t_point position)
   return 1;
 }
 
-
 int handle_input(int keycode, t_game *game)
 {
   t_point temp = game->map.starting_p;
   
-  if (keycode == 65307)
+  if (keycode == XK_Escape)
     close_game(game);
-  else if (keycode == 119)
+  else if (keycode == XK_w)
   {
     temp.y -= 1;
     if (check_boundary(game, temp))
     {
       game->map.starting_p.y -= 1;
       game->moves++;
+      game->player_state = 1;
     }
   } 
-  else if (keycode == 115)
+  else if (keycode == XK_s)
   {
     temp.y += 1;
     if (check_boundary(game, temp))
     {
       game->map.starting_p.y += 1;
       game->moves++;
+      game->player_state = 0;
     }
   }
-  else if (keycode == 97)
+  else if (keycode == XK_a)
   {
     temp.x -= 1;
     if (check_boundary(game, temp))
     {
       game->map.starting_p.x -= 1;
       game->moves++;
+      game->player_state = 2;
     }
   }
-  else if (keycode == 100)
+  else if (keycode == XK_d)
   {
     temp.x += 1;
     if (check_boundary(game, temp))
     {
       game->map.starting_p.x += 1;
       game->moves++;
+      game->player_state = 3;
     }
   }
   render_map(game);
@@ -376,5 +398,3 @@ int main(int argc, char *argv[])
   mlx_key_hook(game.win_ptr, handle_input, &game);
   mlx_loop(game.mlx_ptr);
 }
-
-
