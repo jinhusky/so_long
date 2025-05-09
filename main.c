@@ -6,7 +6,7 @@
 /*   By: kationg <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 01:55:27 by kationg           #+#    #+#             */
-/*   Updated: 2025/05/09 16:52:14 by kationg          ###   ########.fr       */
+/*   Updated: 2025/05/09 17:14:06 by kationg          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,6 @@ void free_map(t_game *game)
   if (game->map.array)
     free(game->map.array);
 }
-
-
 
 void error_mssg(char *message, t_game *game)
 {
@@ -222,6 +220,13 @@ static void check_cml_argument(int argc, char *arg, t_game *game)
     error_mssg("Too many arguments, Usage: ./so_long [map file path]", game);
   else if (argc < 2)
     error_mssg("To run game please include the path of map file", game);
+  int i = 0;
+  char *file_type;
+  file_type = arg;
+  while (file_type[i] != '.')
+    file_type++;
+  if (ft_strncmp(".ber", file_type, 5) != 0)
+    error_mssg("invalid map file type, only .ber file is accepted", game);
   int fd = open(arg, O_RDONLY);
   if (fd == -1)
     error_mssg("Unable to open map file", game);
