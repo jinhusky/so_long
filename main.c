@@ -6,7 +6,7 @@
 /*   By: kationg <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 01:55:27 by kationg           #+#    #+#             */
-/*   Updated: 2025/05/09 15:07:00 by kationg          ###   ########.fr       */
+/*   Updated: 2025/05/09 16:52:14 by kationg          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ void error_mssg(char *message, t_game *game)
   exit(EXIT_FAILURE);
 }
 
+//here im strjoining game->array and a long string and at the same time checking each line is the same width
 void check_map_size(t_game *game)
 {
   game->map.array = ft_strdup("");
@@ -70,7 +71,9 @@ void check_map_size(t_game *game)
     if (game->map.h != 0)
       p_width = game->map.w;
     game->map.w = 0;
-    game->map.array = ft_strjoin(game->map.array, line);
+    char *temp = game->map.array;
+    game->map.array = ft_strjoin(temp, line);
+    free(temp);
     while (line[game->map.w] != '\n' && line[game->map.w])
       game->map.w++;
     if (p_width != game->map.w && game->map.h != 0)
@@ -261,10 +264,10 @@ void load_sprite(t_game *game)
   game->wall = init_sprite(game, "assets/terrains/11zon_wall.xpm");
 }
 
-void draw_pixel(t_game *game, t_sprite *buffer,int color, int y, int x)
+void draw_pixel(t_sprite *buffer,int color, int y, int x)
 {
   char *pixel;
-  if (x >= 0 && x <= game->map.w * IMG_W && y >= 0 && y <= game->map.h * IMG_H && color != (int)0xFF000000)
+  if (color != (int)0xFF000000)
   {
     pixel = buffer->img_addr + ((y * buffer->size_line) + (x *(buffer->bpp / 8)));
     *(unsigned int *)pixel = color;
@@ -290,7 +293,7 @@ void buffer_img(t_game *game, t_sprite *sprite, t_point pos)
       //img_data + position to move towards the target pixel to avoid byte offset
       temp.y = pos.y + i;
       temp.x = pos.x + j;
-      draw_pixel(game, &game->buffer,color, temp.y, temp.x);
+      draw_pixel(&game->buffer,color, temp.y, temp.x);
       j++;
     }
     i++; 
@@ -307,18 +310,20 @@ void render_sprite(t_game *game, char c, t_point pos)
     buffer_img(game, &game->exit, pos);
 }
 
-/*
 static void buffer_player(t_game *game)
 {
+  t_point pos;
+  pos.y = game->map.starting_p.y * IMG_H;
+  pos.x = game->map.starting_p.x * IMG_W;
   if (game->player_state == 0)
-    mlx_put_image_to_window(game->mlx_ptr, game->win_ptr, game->player_front.img_ptr, IMG_W * game->map.starting_p.x, IMG_H * game->map.starting_p.y);
+    buffer_img(game, &game->player_front, pos);
   else if (game->player_state == 1)
-    mlx_put_image_to_window(game->mlx_ptr, game->win_ptr, game->player_back.img_ptr, IMG_W * game->map.starting_p.x, IMG_H * game->map.starting_p.y);
+    buffer_img(game, &game->player_back, pos);
   else if (game->player_state == 2)
-    mlx_put_image_to_window(game->mlx_ptr, game->win_ptr, game->player_left.img_ptr, IMG_W * game->map.starting_p.x, IMG_H * game->map.starting_p.y);
+    buffer_img(game, &game->player_left, pos);
   else if (game->player_state == 3)
-    mlx_put_image_to_window(game->mlx_ptr, game->win_ptr, game->player_right.img_ptr, IMG_W * game->map.starting_p.x, IMG_H * game->map.starting_p.y);
-}*/
+    buffer_img(game, &game->player_right, pos);
+}
 
 void buffer_fixed_elements(t_game *game)
 {
@@ -339,8 +344,6 @@ void buffer_fixed_elements(t_game *game)
     i++;
   }
 }
-
-
 
 int close_game(t_game* game)
 {
@@ -402,6 +405,7 @@ int handle_input(int keycode, t_game *game)
       game->player_state = 0;
     }
   }
+
   else if (keycode == XK_a)
   {
     temp.x -= 1;
@@ -434,9 +438,11 @@ int print_game_map(t_game *game)
   buffer_player(game);
   mlx_put_image_to_window(game->mlx_ptr, game->win_ptr, game->buffer.img_ptr, 0, 0);
   char *movements = ft_itoa(game->moves);
-  mlx_string_put(game->mlx_ptr, game->win_ptr, 40, 20, 255, ft_strjoin("Movements: ",movements));
-  // free memory;
-
+  char *string = ft_strjoin("Movements: ", movements);
+  mlx_string_put(game->mlx_ptr, game->win_ptr, 40, 20, 255, string);
+  free(string);
+  free(movements);
+  mlx_destroy_image(game->mlx_ptr, game->buffer.img_ptr);
   return (0);
 }
 
