@@ -6,7 +6,7 @@
 /*   By: kationg <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 01:55:27 by kationg           #+#    #+#             */
-/*   Updated: 2025/05/09 17:14:06 by kationg          ###   ########.fr       */
+/*   Updated: 2025/05/09 19:01:12 by kationg          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -279,7 +279,7 @@ void draw_pixel(t_sprite *buffer,int color, int y, int x)
   }
 }
 
-void buffer_img(t_game *game, t_sprite *sprite, t_point pos)
+void buffer_sprite(t_game *game, t_sprite *sprite, t_point pos)
 {
   int i;
   int j;
@@ -308,11 +308,11 @@ void buffer_img(t_game *game, t_sprite *sprite, t_point pos)
 void render_sprite(t_game *game, char c, t_point pos)
 {
   if (c == WALL)
-    buffer_img(game, &game->wall, pos);
+    buffer_sprite(game, &game->wall, pos);
   else if (c == COLLECTIBLES)
-    buffer_img(game, &game->collectibles, pos);
+    buffer_sprite(game, &game->collectibles, pos);
   else if (c == EXIT)
-    buffer_img(game, &game->exit, pos);
+    buffer_sprite(game, &game->exit, pos);
 }
 
 static void buffer_player(t_game *game)
@@ -321,13 +321,13 @@ static void buffer_player(t_game *game)
   pos.y = game->map.starting_p.y * IMG_H;
   pos.x = game->map.starting_p.x * IMG_W;
   if (game->player_state == 0)
-    buffer_img(game, &game->player_front, pos);
+    buffer_sprite(game, &game->player_front, pos);
   else if (game->player_state == 1)
-    buffer_img(game, &game->player_back, pos);
+    buffer_sprite(game, &game->player_back, pos);
   else if (game->player_state == 2)
-    buffer_img(game, &game->player_left, pos);
+    buffer_sprite(game, &game->player_left, pos);
   else if (game->player_state == 3)
-    buffer_img(game, &game->player_right, pos);
+    buffer_sprite(game, &game->player_right, pos);
 }
 
 void buffer_fixed_elements(t_game *game)
@@ -342,7 +342,7 @@ void buffer_fixed_elements(t_game *game)
     {
       pos.y = i * IMG_H;
       pos.x = j * IMG_W;
-      buffer_img(game, &game->floor, pos);
+      buffer_sprite(game, &game->floor, pos);
       render_sprite(game, game->map.matrix[i][j], pos);
       j++;
     }
