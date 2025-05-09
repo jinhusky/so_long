@@ -20,24 +20,22 @@
 #define EXIT 'E'
 #define PLAYER 'P'
 
-#define WIN_W 1024
-#define WIN_H 576
-
-typedef struct s_sprite
-{
-  void *img_ptr;
-  int w;
-  int h;
-  int x;
-  int y;
-  struct s_sprite *next;
-}t_sprite;
-
 typedef struct s_point
 {
   int y;
   int x;
 }t_point;
+
+typedef struct s_sprite
+{
+  void *img_ptr;
+  t_point size;
+  int bpp;
+  int size_line;
+  int endian;
+  char *img_addr;
+  struct s_sprite *next;
+}t_sprite;
 
 typedef struct s_map
 {
@@ -58,6 +56,7 @@ typedef struct s_game
   void *mlx_ptr;
   void *win_ptr;
   t_map map;
+  t_sprite buffer;
   t_sprite floor;
   t_sprite wall;
   t_sprite collectibles;

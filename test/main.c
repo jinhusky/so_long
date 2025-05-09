@@ -6,7 +6,7 @@
 /*   By: kationg <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 01:55:27 by kationg           #+#    #+#             */
-/*   Updated: 2025/05/09 15:07:00 by kationg          ###   ########.fr       */
+/*   Updated: 2025/05/08 03:06:04 by kationg          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -245,7 +245,6 @@ t_sprite init_sprite(t_game *game, char *file_path)
   sprite.img_ptr = mlx_xpm_file_to_image(game->mlx_ptr, file_path, &sprite.size.x, &sprite.size.y);
   if (!sprite.img_ptr)
     error_mssg("Sprite was not found", game);
-  sprite.img_addr = mlx_get_data_addr(sprite.img_ptr, &sprite.bpp, &sprite.size_line, &sprite.endian);
   return (sprite);
 }
 
@@ -261,54 +260,18 @@ void load_sprite(t_game *game)
   game->wall = init_sprite(game, "assets/terrains/11zon_wall.xpm");
 }
 
-void draw_pixel(t_game *game, t_sprite *buffer,int color, int y, int x)
+void render_sprite(t_game *game, char c, int y, int x)
 {
-  char *pixel;
-  if (x >= 0 && x <= game->map.w * IMG_W && y >= 0 && y <= game->map.h * IMG_H && color != (int)0xFF000000)
-  {
-    pixel = buffer->img_addr + ((y * buffer->size_line) + (x *(buffer->bpp / 8)));
-    *(unsigned int *)pixel = color;
-  }
-}
-
-void buffer_img(t_game *game, t_sprite *sprite, t_point pos)
-{
-  int i;
-  int j;
-  int color;
-  int location;
-  i = 0;
-  t_point temp;
-  while (i < sprite->size.y)
-  {
-    j = 0;
-    while (j < sprite->size.x)
-    {
-      //bpp is 4 (32/8 == 4, 4bytes per pixel) size_line to skip padding 
-      location = (i * sprite->size_line) + (j * sprite->bpp / 8);
-      color = *(unsigned int *)(sprite->img_addr + location);
-      //img_data + position to move towards the target pixel to avoid byte offset
-      temp.y = pos.y + i;
-      temp.x = pos.x + j;
-      draw_pixel(game, &game->buffer,color, temp.y, temp.x);
-      j++;
-    }
-    i++; 
-  }
-}
-
-void render_sprite(t_game *game, char c, t_point pos)
-{
+  mlx_put_image_to_window(game->mlx_ptr, game->win_ptr, game->floor.img_ptr, IMG_W * x, IMG_H * y);
   if (c == WALL)
-    buffer_img(game, &game->wall, pos);
+    mlx_put_image_to_window(game->mlx_ptr, game->win_ptr, game->wall.img_ptr, IMG_W * x, IMG_H * y);
   else if (c == COLLECTIBLES)
-    buffer_img(game, &game->collectibles, pos);
+    mlx_put_image_to_window(game->mlx_ptr, game->win_ptr, game->collectibles.img_ptr, IMG_W * x, IMG_H * y);
   else if (c == EXIT)
-    buffer_img(game, &game->exit, pos);
+    mlx_put_image_to_window(game->mlx_ptr, game->win_ptr, game->exit.img_ptr, IMG_W * x, IMG_H * y);
 }
 
-/*
-static void buffer_player(t_game *game)
+static void render_player(t_game *game)
 {
   if (game->player_state == 0)
     mlx_put_image_to_window(game->mlx_ptr, game->win_ptr, game->player_front.img_ptr, IMG_W * game->map.starting_p.x, IMG_H * game->map.starting_p.y);
@@ -318,29 +281,28 @@ static void buffer_player(t_game *game)
     mlx_put_image_to_window(game->mlx_ptr, game->win_ptr, game->player_left.img_ptr, IMG_W * game->map.starting_p.x, IMG_H * game->map.starting_p.y);
   else if (game->player_state == 3)
     mlx_put_image_to_window(game->mlx_ptr, game->win_ptr, game->player_right.img_ptr, IMG_W * game->map.starting_p.x, IMG_H * game->map.starting_p.y);
-}*/
+}
 
-void buffer_fixed_elements(t_game *game)
+int render_map(t_game *game)
 {
   int i = 0;
   int j;
-  t_point pos;
   while (i < game->map.h)
   {
     j = 0;
     while (j < game->map.w)
     {
-      pos.y = i * IMG_H;
-      pos.x = j * IMG_W;
-      buffer_img(game, &game->floor, pos);
-      render_sprite(game, game->map.matrix[i][j], pos);
+      render_sprite(game, game->map.matrix[i][j], i, j);
       j++;
     }
     i++;
   }
+  render_player(game);
+  char *movements = ft_itoa(game->moves);
+  mlx_string_put(game->mlx_ptr, game->win_ptr, 40, 20, 255, ft_strjoin("Movements: ",movements));
+  // free memory;
+  return (0);
 }
-
-
 
 int close_game(t_game* game)
 {
@@ -422,21 +384,7 @@ int handle_input(int keycode, t_game *game)
       game->player_state = 3;
     }
   }
-  return (0);
-}
-
-//must return int cuz loop hook expects an int to be returned to indicate success
-int print_game_map(t_game *game)
-{
-  game->buffer.img_ptr = mlx_new_image(game->mlx_ptr, game->map.w * 32, game->map.h * 32);
-  game->buffer.img_addr = mlx_get_data_addr(game->buffer.img_ptr, &game->buffer.bpp, &game->buffer.size_line, &game->buffer.endian);
-  buffer_fixed_elements(game);
-  buffer_player(game);
-  mlx_put_image_to_window(game->mlx_ptr, game->win_ptr, game->buffer.img_ptr, 0, 0);
-  char *movements = ft_itoa(game->moves);
-  mlx_string_put(game->mlx_ptr, game->win_ptr, 40, 20, 255, ft_strjoin("Movements: ",movements));
-  // free memory;
-
+  render_map(game);
   return (0);
 }
 
@@ -448,7 +396,7 @@ int main(int argc, char *argv[])
   check_map(&game);
   init_mlx(&game);
   load_sprite(&game);
-  mlx_loop_hook(game.mlx_ptr, print_game_map, &game);
+  render_map(&game);
   mlx_hook(game.win_ptr, 17, 0L, close_game,  &game);
   mlx_key_hook(game.win_ptr, handle_input, &game);
   mlx_loop(game.mlx_ptr);
