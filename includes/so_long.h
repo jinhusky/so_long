@@ -11,8 +11,8 @@
 #include <stdio.h>
 #include <X11/keysym.h>
 
-#define IMG_H 32
-#define IMG_W 32
+#define IMG_H 64
+#define IMG_W 64
 
 #define FLOOR '0'
 #define WALL '1'

@@ -6,7 +6,7 @@
 /*   By: kationg <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 01:55:27 by kationg           #+#    #+#             */
-/*   Updated: 2025/05/13 14:07:36 by kationg          ###   ########.fr       */
+/*   Updated: 2025/06/03 10:54:49 by kationg          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -241,7 +241,8 @@ void init_mlx(t_game *game)
   game->win_ptr = mlx_new_window(game->mlx_ptr, game->map.w * IMG_W, game->map.h * IMG_H, "so_long");
   if (!game->win_ptr)
   {
-    free(game->mlx_ptr);    
+    mlx_destroy_display(game->mlx_ptr);
+    free(game->mlx_ptr);
     error_mssg("failed to make new mlx window", game);
   }
 }
@@ -259,14 +260,14 @@ t_sprite init_sprite(t_game *game, char *file_path)
 
 void load_sprite(t_game *game)
 {
-  game->player_front = init_sprite(game, "assets/character/11zon_walk-front.xpm");
+  game->player_front = init_sprite(game, "assets/character/11zon_idle-front.xpm");
   game->player_back = init_sprite(game, "assets/character/11zon_walk-back.xpm");
   game->player_right = init_sprite(game, "assets/character/11zon_walk-right.xpm");
   game->player_left = init_sprite(game, "assets/character/11zon_walk-left.xpm");
-  game->collectibles = init_sprite(game, "assets/items/11zon_dynamite.xpm");
-  game->exit = init_sprite(game, "assets/items/11zon_door-with-lock.xpm");
-  game->floor = init_sprite(game, "assets/terrains/11zon_ground.xpm");
-  game->wall = init_sprite(game, "assets/terrains/11zon_wall.xpm");
+  game->collectibles = init_sprite(game, "assets/items/key.xpm");
+  game->exit = init_sprite(game, "assets/items/exit.xpm");
+  game->floor = init_sprite(game, "assets/terrains/ground.xpm");
+  game->wall = init_sprite(game, "assets/terrains/wall.xpm");
 }
 
 void draw_pixel(t_sprite *buffer,int color, int y, int x)
@@ -274,10 +275,12 @@ void draw_pixel(t_sprite *buffer,int color, int y, int x)
   char *pixel;
   if (color != (int)0xFF000000)
   {
-    pixel = buffer->img_addr + ((y * buffer->size_line) + (x *(buffer->bpp / 8)));
+		pixel = buffer->img_addr + ((y * buffer->size_line) + (x *(buffer->bpp / 8)));
     *(unsigned int *)pixel = color;
   }
 }
+
+
 
 void buffer_sprite(t_game *game, t_sprite *sprite, t_point pos)
 {
@@ -356,11 +359,14 @@ int close_game(t_game* game)
   destroy_sprite(game);
   if (game->end_state)
     ft_printf("Victory! %i MOVES made \n", game->moves);
-  mlx_destroy_window(game->mlx_ptr, game->win_ptr);
-  mlx_destroy_display(game->mlx_ptr);
-  free(game->mlx_ptr);
+  if (game->win_ptr)
+    mlx_destroy_window(game->mlx_ptr, game->win_ptr);
+  if (game->mlx_ptr)
+  {
+    mlx_destroy_display(game->mlx_ptr);
+    free(game->mlx_ptr);
+  }
   exit(0);
-  return (0);
 }
 
 int check_boundary(t_game *game, t_point position)
@@ -434,10 +440,11 @@ int handle_input(int keycode, t_game *game)
   return (0);
 }
 
+
 //must return int cuz loop hook expects an int to be returned to indicate success
 int print_game_map(t_game *game)
 {
-  game->buffer.img_ptr = mlx_new_image(game->mlx_ptr, game->map.w * 32, game->map.h * 32);
+  game->buffer.img_ptr = mlx_new_image(game->mlx_ptr, game->map.w * 64, game->map.h * 64);
   game->buffer.img_addr = mlx_get_data_addr(game->buffer.img_ptr, &game->buffer.bpp, &game->buffer.size_line, &game->buffer.endian);
   buffer_fixed_elements(game);
   buffer_player(game);
@@ -450,6 +457,8 @@ int print_game_map(t_game *game)
   mlx_destroy_image(game->mlx_ptr, game->buffer.img_ptr);
   return (0);
 }
+
+
 
 int main(int argc, char *argv[])
 {

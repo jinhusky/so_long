@@ -3,7 +3,7 @@ NAME = so_long
 SRC = main.c 
 
 CC = cc
-CC_FLAGS = -Wall -Wextra -Werror
+CC_FLAGS = -Wall -Wextra -Werror -g3
 
 OBJECT_DIR = objects/
 OBJECT_SRC = $(addprefix $(OBJECT_DIR), $(SRC:.c=.o))
