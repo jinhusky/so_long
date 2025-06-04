@@ -2,13 +2,9 @@
 # define SO_LONG_H
 
 #include "../libft/libft.h"
-#include "../ft_printf/src/ft_printf.h"
-#include "../get_next_line/get_next_line.h"
 #include "../mlx/mlx.h"
-#include <stdlib.h>
 #include <fcntl.h>
 #include <errno.h>
-#include <stdio.h>
 #include <X11/keysym.h>
 
 #define IMG_H 64
@@ -70,17 +66,34 @@ typedef struct s_game
   int moves;
 } t_game;
 
-//parse_map helper functions
+//check_map
+void check_map(t_game *game);
+int check_floodfill(char **grid, t_game *game);
+void flood_fill(char **grid, int h, int w, t_point begin);
+
+//free mem and error handling
+void destroy_sprite(t_game *game);
+void free_map(t_game *game);
+void error_mssg(char *message, t_game *game);
+void free_grid(char **grid, t_game *game);
+
+//mlx functions
+void init_mlx(t_game *game);
+int close_game(t_game* game);
+void load_sprite(t_game *game);
+
+//rendering map
+int print_game_map(t_game *game);
+void buffer_sprite(t_game *game, t_sprite *sprite, t_point pos);
+
+//game mechanics 
+int handle_input(int keycode, t_game *game);
 
 
 
-void check_map_size(t_game *map);
 
-char **parse_matrix(t_game *map);
 
-void check_minimum_asset(t_game *map);
 
-void valid_map(t_game *map);
 
 
 #endif

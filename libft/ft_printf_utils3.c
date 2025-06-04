@@ -1,30 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstsize.c                                       :+:      :+:    :+:   */
+/*   ft_printf_utils3.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kationg <kationg@student.42kl.edu.my>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/19 15:37:25 by kationg           #+#    #+#             */
-/*   Updated: 2025/05/20 10:52:22 by kationg          ###   ########.fr       */
+/*   Created: 2025/01/14 00:19:12 by kationg           #+#    #+#             */
+/*   Updated: 2025/05/23 01:12:06 by kationg          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "ft_printf.h"
 #include "libft.h"
 
-int	ft_lstsize(t_list *lst)
+int	ft_putchar(const char c)
 {
-	int		size;
-	t_list	*ptr;
+	return (write(1, &c, 1));
+}
 
-	if (!lst)
-		return (0);
-	ptr = lst;
-	size = 0;
-	while (ptr)
+int	ft_putstr(const char *s)
+{
+	size_t	i;
+
+	if (!s)
+		return (ft_putstr("(null)"));
+	i = 0;
+	while (s[i])
 	{
-		size++;
-		ptr = ptr->next;
+		write(1, &s[i], 1);
+		i++;
 	}
-	return (size);
+	return (i);
 }
