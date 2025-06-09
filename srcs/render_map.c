@@ -6,13 +6,11 @@
 /*   By: kationg <kationg@student.42kl.edu.my>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 17:05:19 by kationg           #+#    #+#             */
-/*   Updated: 2025/06/04 18:14:45 by kationg          ###   ########.fr       */
+/*   Updated: 2025/06/09 07:59:38 by kationg          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/so_long.h"
-
-
 
 static void check_sprite(t_game *game, char c, t_point pos)
 {
@@ -26,17 +24,18 @@ static void check_sprite(t_game *game, char c, t_point pos)
 
 static void buffer_player(t_game *game)
 {
-  t_point pos;
-  pos.y = game->map.starting_p.y * IMG_H;
-  pos.x = game->map.starting_p.x * IMG_W;
-  if (game->player_state == 0)
-    buffer_sprite(game, &game->player_front, pos);
-  else if (game->player_state == 1)
-    buffer_sprite(game, &game->player_back, pos);
-  else if (game->player_state == 2)
-    buffer_sprite(game, &game->player_left, pos);
-  else if (game->player_state == 3)
-    buffer_sprite(game, &game->player_right, pos);
+	t_point pos;
+	pos.y = game->map.starting_p.y * IMG_H;
+	pos.x = game->map.starting_p.x * IMG_W;
+	
+	if (game->player_state == 0)
+		buffer_sprite(game, &game->player_front, pos);
+	else if (game->player_state == 1)
+		buffer_sprite(game, &game->player_back, pos);
+	else if (game->player_state == 2)
+		buffer_sprite(game, &game->player_left, pos);
+	else if (game->player_state == 3)
+		buffer_sprite(game, &game->player_right, pos);	
 }
 
 static void buffer_fixed_elements(t_game *game)
