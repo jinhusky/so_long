@@ -56,7 +56,8 @@ static char **parse_matrix(t_game *game)
       i++;
       len++;
     }
-    ft_strlcpy(grid[count++], game->map.array + i - len, game->map.w + 1);
+    ft_strlcpy(grid[count], game->map.array + i - len, game->map.w + 1);
+    count++;
     i++;
   }
   return (grid);
