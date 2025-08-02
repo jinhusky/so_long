@@ -69,7 +69,7 @@ typedef struct s_game
 //check_map
 void check_map(t_game *game);
 int check_floodfill(char **grid, t_game *game);
-void flood_fill(char **grid, int h, int w, t_point begin);
+void flood_fill(char **grid, int h, int w, int y, int x);
 
 //free mem and error handling
 void destroy_sprite(t_game *game);
