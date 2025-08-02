@@ -25,7 +25,8 @@ check_error_map() {
 local map_file="$1"
 local EXPECTED_OUTPUT="$2"
 
-leaks --atExit -- ./so_long "$map_file" > /dev/null 2>&1
+
+valgrind --leak-check=full --error-exitcode=1 ./so_long "$map_file" > /dev/null 2>&1
 LEAKS=$?
 if [ $LEAKS -eq 1 ]; then
         printf "${RED}$C.[MKO] LEAKS ${DEF_COLOR}"
@@ -86,8 +87,8 @@ PID=$!
 
 sleep 0.35
 
-ps $PID > /dev/null
 
+ps -p $PID > /dev/null
 CHECK_ERROR=$?
 
 if [ $CHECK_ERROR == 0 ]; then
@@ -125,7 +126,7 @@ fi
 #En todos estos casos tu programa debera printar error y no ejecutar el juego. ↓
 
 
-leaks --atExit -- ./so_long > /dev/null 2>&1
+valgrind --leak-check=full --error-exitcode=1 ./so_long "$map_file" > /dev/null 2>&1
 LEAKS=$?
 if [ $LEAKS -eq 1 ]; then
         printf "${RED}$C.[MKO] LEAKS ${DEF_COLOR}"
@@ -160,7 +161,8 @@ fi
 ((C++))
 rm -rf test_check.txt
 
-leaks --atExit -- ./so_long invent.ber more argv > /dev/null 2>&1
+
+valgrind --leak-check=full --error-exitcode=1 ./so_long "$map_file" > /dev/null 2>&1
 LEAKS=$?
 if [ $LEAKS -eq 1 ]; then
         printf "${RED}$C.[MKO] LEAKS ${DEF_COLOR}"
