@@ -6,7 +6,7 @@
 /*   By: kationg <kationg@student.42kl.edu.my>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 15:18:06 by kationg           #+#    #+#             */
-/*   Updated: 2025/08/02 17:15:00 by kationg          ###   ########.fr       */
+/*   Updated: 2025/08/02 17:42:06 by kationg          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,10 @@ static void	check_map_size(t_game *game)
 		while (line[game->map.w] != '\n' && line[game->map.w])
 			game->map.w++;
 		if (p_width != game->map.w && game->map.h != 0)
+		{
+			free(line);
 			error_mssg("Map is Not Rectangle", game);
+		}
 		free(line);
 		line = get_next_line(game->map.fd);
 		game->map.h++;
@@ -131,6 +134,9 @@ void	check_map(t_game *game)
 	s_pos = game->map.starting_p;
 	flood_fill(cpy_grid, game->map.h, game->map.w, s_pos.y, s_pos.x);
 	if (check_floodfill(cpy_grid, game))
+	{
+		free_grid(cpy_grid, game);
 		error_mssg("Some exit or collectibles cannot be reached", game);
+	}
 	free_grid(cpy_grid, game);
 }
