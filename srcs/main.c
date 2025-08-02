@@ -38,14 +38,16 @@ int main(int argc, char *argv[])
   ft_memset(&game, 0, sizeof(t_game));
   check_cml_argument(argc, argv[1], &game);
   check_map(&game);
-  for (int i = 0; i < game.map.h; i++)
+  /*
+  for (int i = 0; game.map.matrix[i] ; i++)
   {
-    for (int j = 0; j < game.map.w; j++)
+    for (int j = 0; game.map.matrix[i][j]; j++)
     {
       ft_printf("%c", game.map.matrix[i][j]);
     }
     ft_printf("\n");
   }
+  */
   init_mlx(&game);
   load_sprite(&game);
   mlx_loop_hook(game.mlx_ptr, print_game_map, &game);
