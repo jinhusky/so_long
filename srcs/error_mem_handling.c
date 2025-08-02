@@ -6,11 +6,24 @@
 /*   By: kationg <kationg@student.42kl.edu.my>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 16:58:40 by kationg           #+#    #+#             */
-/*   Updated: 2025/08/02 16:52:27 by kationg          ###   ########.fr       */
+/*   Updated: 2025/08/02 22:37:43 by kationg          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/so_long.h"
+
+void	check_rectangle(t_game *game, int p_width, char *line)
+{
+	if (p_width != game->map.w && game->map.h != 0)
+	{
+		while (line)
+		{
+			free(line);
+			line = get_next_line(game->map.fd);
+		}
+		error_mssg("Map is Not Rectangle", game);
+	}
+}
 
 void	free_grid(char **grid, t_game *game)
 {

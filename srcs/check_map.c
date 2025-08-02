@@ -6,7 +6,7 @@
 /*   By: kationg <kationg@student.42kl.edu.my>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 15:18:06 by kationg           #+#    #+#             */
-/*   Updated: 2025/08/02 22:27:25 by kationg          ###   ########.fr       */
+/*   Updated: 2025/08/02 22:35:31 by kationg          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,15 +31,7 @@ static void	check_map_size(t_game *game)
 		free(temp);
 		while (line[game->map.w] != '\n' && line[game->map.w])
 			game->map.w++;
-		if (p_width != game->map.w && game->map.h != 0)
-		{
-			while(line)
-			{
-				free(line);
-				line = get_next_line(game->map.fd);
-			}
-			error_mssg("Map is Not Rectangle", game);
-		}
+		check_rectangle(game, p_width, line);
 		free(line);
 		line = get_next_line(game->map.fd);
 		game->map.h++;
