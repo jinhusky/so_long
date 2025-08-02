@@ -2,7 +2,7 @@ NAME = so_long
 
 SRC = \
 	  srcs/main.c srcs/check_map.c srcs/error_mem_handling.c srcs/flood_fill.c srcs/mlx.c \
-	  srcs/render_map.c srcs/render_map2.c srcs/game_mechanics.c \
+	  srcs/render_map.c srcs/render_map2.c srcs/game_mechanics.c srcs/moves.c \
 
 CC = cc
 

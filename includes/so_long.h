@@ -69,7 +69,7 @@ typedef struct s_game
 //check_map
 void check_map(t_game *game);
 int check_floodfill(char **grid, t_game *game);
-void flood_fill(char **grid, int h, int w, int y, int x);
+void flood_fill(char **grid	, int y, int x);
 
 //free mem and error handling
 void destroy_sprite(t_game *game);
@@ -88,6 +88,17 @@ void buffer_sprite(t_game *game, t_sprite *sprite, t_point pos);
 
 //game mechanics 
 int handle_input(int keycode, t_game *game);
+int	check_boundary(t_game *game, t_point position);
+
+//moves
+void	up(t_game *game, t_point *temp);
+void	down(t_game *game, t_point *temp);
+void	left(t_game *game, t_point *temp);
+void	right(t_game *game, t_point *temp);
+
+
+
+
 
 
 
